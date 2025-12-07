@@ -1,0 +1,29 @@
+# Node Modules
+backend/node_modules
+
+# Logs
+npm-debug.log
+yarn-debug.log
+yarn-error.log
+
+# Environment Files
+.env
+backend/node_modules
+backend/.env
+frontend/.env
+
+# Build folders
+dist/
+build/
+
+# OS system files
+.DS_Store
+Thumbs.db
+
+# IDE settings
+.vscode/
+.idea/
+
+# Dependencies backup
+package-lock.json
+yarn.lock

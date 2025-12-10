@@ -1,26 +1,73 @@
 import express from "express";
 import dotenv from "dotenv";
-import cors from "cors"
+import cors from "cors";
 import connectDB from "./config/db.js";
 import errorHandler from "./middleware/errorMiddleware.js";
+import authRoutes from "./routes/authRoutes.js";
+import itemRoutes from "./routes/itemRoutes.js";
+import notify from "./routes/notification.js";
+import userRoutes from "./routes/userRoutes.js";
+import verificationRoutes from "./routes/otpVerification.js";
+import http from "http"
+import { Server } from "socket.io";
+
+
+
+
 dotenv.config();
-connectDB();
+connectDB(); // connect DB first
 
+const app = express();
+const server = http.createServer(app);
 
-const app=express();
-
-
-app.use(cors);
-app.use(express.json);
+// Middlewares
+app.use(cors());
+app.use(express.json());
 app.use(errorHandler);
 
 
-app.get("/", (req, res)=>{
-    res.send("Lost & Found API Running 🚀");
-})
+
+// Routes
+app.use("/api/auth", authRoutes);
+app.use("/api/items", itemRoutes);
+app.use("/api/user/notification", notify);
+app.use("/api/user", userRoutes);
+app.use("/api/verify", verificationRoutes);
 
 
-const PORT=process.env.PORT || 5000
-app.listen(PORT, ()=>{
-    console.log(`⚡ Server running on port ${PORT}`);
-})
+
+// socket code 
+
+const io=new Server(server, {
+  cors:{
+    origin:"*",
+    methods:['GET', 'POST']
+  }
+});
+
+
+io.on("connection", (socket)=>{
+  console.log("New client connected:", socket.id);
+
+  socket.on("join", (userId)=>{
+    socket.join(userId);
+    console.log(`User ${userId} joined room`);
+  });
+
+  socket.on("testEvent", (data) => {
+        console.log("Client Sent:", data);
+        socket.emit("serverResponse", "Server says Hello 👋");
+  });
+
+  socket.on("disconnect", ()=>{
+    console.log("Client disconnected:", socket.id);
+  });
+
+});
+
+
+const PORT = process.env.PORT || 5000;
+
+app.listen(PORT, () => {
+  console.log(`⚡ Server running on port http://localhost:${PORT}`);
+});

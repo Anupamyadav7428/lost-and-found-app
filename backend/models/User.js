@@ -14,6 +14,22 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    phone:{
+        type: Number,
+        required: true
+    },
+    emailVerified:{
+        type:Boolean,
+        default: false
+    },
+    phoneVerified:{
+        type:Boolean,
+        default:true
+    },
+    emailOTP: String,
+    phoneOTP: String,
+    emailOTPExpires: Date,
+    phoneOTPExpires: Date,
     role: {
         type: String,
         enum: ["user", "admin"],
@@ -32,4 +48,8 @@ const userSchema = new mongoose.Schema({
 
 },
 { timestamps: true }
-)
+);
+
+
+
+export default mongoose.model("User", userSchema);

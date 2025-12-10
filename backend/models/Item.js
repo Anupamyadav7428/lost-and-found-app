@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+// import { asyncHandler } from "../utils/asyncHandler.js";
 
 const itemSchema = new mongoose.Schema(
     {
@@ -32,7 +33,11 @@ const itemSchema = new mongoose.Schema(
             ref: "User", 
             required: true 
         },
+        claimedBy: { 
+            type: mongoose.Schema.Types.ObjectId, ref: "User", 
+            default: null },
         similarItems: [{ type: mongoose.Schema.Types.ObjectId, ref: "Item" }],
     },
     { timestamps: true }
-)
+);
+export default mongoose.model("Item", itemSchema);

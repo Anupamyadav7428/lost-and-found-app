@@ -16,6 +16,7 @@ const generateToken = (id) => {
 const registerUser = asyncHandler(async (req, res) => {
     const { name, email, phone, password } = req.body;
     //check user exist
+    console.log(req.body);
     const userExist = await User.findOne({ email });
     if (userExist) {
         res.status(400);

@@ -47,7 +47,7 @@ const updateUserProfile = asyncHandler(async (req, res) => {
     if (req.body.avatarUrl) user.avatarUrl = req.body.avatarUrl;
 
     if (req.body.password) {
-        const salt = bcrypt.salt(10);
+        const salt = bcrypt.genSalt(10);
         user.password = bcrypt.hash(req.user.password, salt);
     }
 
@@ -61,7 +61,7 @@ const updateUserProfile = asyncHandler(async (req, res) => {
 });
 
 const getUserPostedItems = asyncHandler(async (req, res) => {
-    const Items = await Item.find({ postedBt: req.user._id });
+    const Items = await Item.find({ postedBy: req.user._id });
     res.status(200).json({
         success: true,
         Items

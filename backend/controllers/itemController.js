@@ -2,6 +2,10 @@ import Item from "../models/Item.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import Notification from "../models/Notification.js";
 import User from '../models/User.js';
+import Claim from "../models/Claim.js";
+import { getIO } from "../utils/socket.js";
+
+
 
 
 
@@ -64,29 +68,44 @@ const getItems = asyncHandler(async (req, res) => {
 
 const claimItem = asyncHandler(async (req, res) => {
     const { itemId } = req.params;
+    const io = getIO();
 
     const item = await Item.findById(itemId);
     if (!item) {
         res.status(400);
         throw new Error("Item not found");
     }
+     // 2️⃣ Prevent claiming your own item
+    if (item.postedBy.toString() === req.user._id.toString()) {
+        res.status(400);
+        throw new Error("You cannot claim your own item");
+    }
     if (item.status === "claimed") {
         res.status(400);
         throw new Error("Item already claimed");
     }
-    if (item.status !== "claimed") {
-        item.status = "claimed";
-        item.claimedBy = req.user._id;
-        await item.save();
+    // 4️⃣ Check if user has already sent a pending claim
+    const existingClaim = await Claim.findOne({
+        itemId,
+        claimerId: req.user._id,
+        status: "pending"
+    });
+    if (existingClaim) {
+        res.status(400);
+        throw new Error("You already sent a claim request for this item");
     }
+    const claim = await Claim.create({
+        itemId,
+        claimerId: req.user._id,
+        status: "pending"
+    });
     const notification = await Notification.create({
         userId: item.postedBy,
-        type: "claim_update",
-        message: `${req.user.name} claimed your item "${item.title}"`
+        type: "claim_request",
+        message: `${req.user.name} wants to claim your item "${item.title}"`
     });
     const poster = await User.findById(item.postedBy);
-    console.log(`poster is : ${poster}`);
-    const io = req.app.get("io");
+    // const io = req.app.get("io");
     if (poster) {
         poster.notifications.push(notification._id);
         await poster.save();
@@ -101,8 +120,8 @@ const claimItem = asyncHandler(async (req, res) => {
     }
     res.status(200).json({
         success: true,
-        message: "Item claimed successfully",
-        item,
+        message: "item claim request send Successfully",
+        claim,
     });
 
 });
@@ -167,4 +186,4 @@ const deleteItem = asyncHandler(async (req, res) => {
 
 });
 
-export { createItem, getItems, claimItem, updateItem, deleteItem };
+export { createItem, getItems, claimItem, updateItem, deleteItem};

@@ -8,8 +8,10 @@ import itemRoutes from "./routes/itemRoutes.js";
 import notify from "./routes/notification.js";
 import userRoutes from "./routes/userRoutes.js";
 import verificationRoutes from "./routes/otpVerification.js";
+import ClaimRoutes from "./routes/claimRoutes.js"
 import http from "http"
 import { Server } from "socket.io";
+import { initIO } from "./utils/socket.js";
 
 
 
@@ -19,6 +21,7 @@ connectDB(); // connect DB first
 
 const app = express();
 const server = http.createServer(app);
+
 
 // Middlewares
 app.use(cors());
@@ -33,6 +36,7 @@ app.use("/api/items", itemRoutes);
 app.use("/api/user/notification", notify);
 app.use("/api/user", userRoutes);
 app.use("/api/verify", verificationRoutes);
+app.use("/api/claim", ClaimRoutes);
 
 
 
@@ -44,7 +48,7 @@ const io=new Server(server, {
     methods:['GET', 'POST']
   }
 });
-
+initIO(io);
 
 io.on("connection", (socket)=>{
   console.log("New client connected:", socket.id);
@@ -68,6 +72,6 @@ io.on("connection", (socket)=>{
 
 const PORT = process.env.PORT || 5000;
 
-app.listen(PORT, () => {
+server.listen(PORT, () => {
   console.log(`⚡ Server running on port http://localhost:${PORT}`);
 });

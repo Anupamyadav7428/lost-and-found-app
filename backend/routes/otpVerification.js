@@ -8,8 +8,8 @@ import isAuth from "../middleware/authMiddleware.js";
 const router=express.Router();
 
 // router.post("/email/send",  sendMail);
-router.post("/email/verify",  verifyEmail);
+router.post("/email",  verifyEmail);
 // router.post("/phone/send",  sendSMS);
-router.post("/phone/verify",  verifyPhone);
+router.post("/phone",  verifyPhone);
 
 export default router;

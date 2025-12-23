@@ -64,11 +64,12 @@ const loginUser = asyncHandler(async (req, res) => {
         res.status(400);
         throw new Error("Invalid Email or Password");
     }
-
+    const userData = user.toObject();
+    console.log(userData);
     res.status(200).json({
         success: true,
         message: "Login Success",
-        user,
+        user: userData,
         token: generateToken(user._id),
     });
 });

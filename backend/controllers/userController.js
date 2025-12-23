@@ -6,7 +6,7 @@ import { generateToken } from "../controllers/authController.js"
 
 
 const getUserProfile = asyncHandler(async (req, res) => {
-    const user = await User.findById(req.user._id);
+    const user = await User.findById(req.user._id).select("-password -phoneOTP -phoneOTPExpires -phoneVerified -emailVerified -role");
 
     if (!user) {
         res.status(404);

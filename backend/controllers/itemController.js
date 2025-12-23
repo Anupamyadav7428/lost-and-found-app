@@ -10,15 +10,16 @@ import { getIO } from "../utils/socket.js";
 
 
 const createItem = asyncHandler(async (req, res) => {
-    const { title, description, category, latitude, longitude } = req.body;
-    // console.log("Req Body:", req.body);
-    // console.log("Req File:", req.file);
+    const { title, description, category, latitude, longitude, status } = req.body;
+    console.log("Req Body:", req.body);
+    console.log("Req File:", req.file);
     if (!req.file) {
         res.status(400);
         throw new Error("Image is required");
     }
 
-    const imageUrl = req.file.path;
+
+    const imageUrl = req.file.secure_url;
 
     const item = await Item.create({
         title,
@@ -27,7 +28,8 @@ const createItem = asyncHandler(async (req, res) => {
         longitude,
         latitude,
         imageUrl,
-        postedBy: req.user._id
+        postedBy: req.user._id,
+        status,
     });
     res.status(201).json({
         success: true,

@@ -1,18 +1,15 @@
-// import {CloudinaryStorage } from "multer-storage-cloudinary";
-import multerStorageCloudinary from "multer-storage-cloudinary";
-
 import multer from "multer";
+import CloudinaryStorage from "multer-storage-cloudinary";
 import cloudinary from "../config/cloudinaryConfig.js";
 
-
-const storage=multerStorageCloudinary({
-    cloudinary:cloudinary,
-    params:{
-        folder: "lost_found_items",
-        allowed_formats: ["jpg", "jpeg", "png"],
-    }
+const storage = new CloudinaryStorage({
+  cloudinary,
+  params: {
+    folder: "lost_found_items",
+    allowed_formats: ["jpg", "jpeg", "png"],
+  },
 });
 
-const parser=multer({storage});
+const upload = multer({ storage });
 
-export default parser;
+export default upload;

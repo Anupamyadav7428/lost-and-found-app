@@ -114,8 +114,10 @@ const claimItem = asyncHandler(async (req, res) => {
 
 
         io.to(poster._id.toString()).emit("newNotification", {
-            message: `${req.user.name} claimed your item "${item.title}"`,
+            id:notification._id,
+            message: `${req.user.name} claimed your"${item.title}"`,
             itemId: item._id,
+            claimId:claim._id,
             isRead: notification.isRead,
             createdAt: notification.createdAt
         });

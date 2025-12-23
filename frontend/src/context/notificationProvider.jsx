@@ -2,20 +2,22 @@ import { useEffect, useState } from "react";
 import NotificationContext from "./notification.context";
 import api from "../api/axios";
 import useAuth from "./useAuth";
+import socket from "../api/socket"
 
 const NotificationProvider = ({ children }) => {
     const [notification, setNotification] = useState([]);
     const [loading, setLoading] = useState(false);
+    
 
     // const { isLoggedIn } = isAuth();
-    const {isLoggedIn}=useAuth();
+    const {isLoggedIn, user}=useAuth();
 
     const fetchNotification = async () => {
 
         try {
             setLoading(true);
             const res = await api.get("/user/notification/");
-            console.log(res.data.notifications);
+            console.log(res.data);
             setNotification(res.data.notifications || []);
 
         }
@@ -57,6 +59,23 @@ const NotificationProvider = ({ children }) => {
             setNotification([]);
         }
     }, [isLoggedIn]);
+    useEffect(() => {
+    if (!isLoggedIn || !user) return;
+
+    socket.auth = { userId: user._id };
+    socket.connect();
+
+    socket.emit("join", user._id);
+
+    socket.on("newNotification", (data) => {
+      setNotification((prev) => [data, ...prev]);
+    });
+
+    return () => {
+      socket.off("newNotification");
+      socket.disconnect();
+    };
+  }, [isLoggedIn, user]);
 
 
     return (<NotificationContext.Provider value={{ notification, loading, fetchNotification, markAsRead }}>{children}</NotificationContext.Provider>);

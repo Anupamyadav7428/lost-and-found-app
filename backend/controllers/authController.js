@@ -32,7 +32,7 @@ const registerUser = asyncHandler(async (req, res) => {
 
     const user = await User.create({ name, email, phone, password: hashedPass, emailOTP, phoneOTP, emailOTPExpires: new Date(Date.now() + 10 * 60 * 1000), phoneOTPExpires: new Date(Date.now() + 10 * 60 * 1000) });
 
-    await sendMail(email, "Email Verification Code", `Your OTP is ${emailOTP}`);
+    // await sendMail(email, "Email Verification Code", `Your OTP is ${emailOTP}`);
     // await sendSMS(phone, `Your OTP for phone verification is ${phoneOTP}`);
     res.status(201).json({
         success: true,

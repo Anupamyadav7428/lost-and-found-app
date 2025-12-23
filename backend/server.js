@@ -47,29 +47,24 @@ app.use("/api/claim", ClaimRoutes);
 
 const io=new Server(server, {
   cors:{
-    origin:"*",
-    methods:['GET', 'POST']
+    origin:"http://localhost:5173",
+    methods:['GET', 'POST'],
+    credentials: true
   }
 });
 initIO(io);
 
-io.on("connection", (socket)=>{
-  console.log("New client connected:", socket.id);
+io.on("connection", (socket) => {
+  const userId = socket.handshake.auth?.userId;
 
-  socket.on("join", (userId)=>{
+  if (userId) {
     socket.join(userId);
     console.log(`User ${userId} joined room`);
-  });
+  }
 
-  socket.on("testEvent", (data) => {
-        console.log("Client Sent:", data);
-        socket.emit("serverResponse", "Server says Hello 👋");
-  });
-
-  socket.on("disconnect", ()=>{
+  socket.on("disconnect", () => {
     console.log("Client disconnected:", socket.id);
   });
-
 });
 
 

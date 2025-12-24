@@ -4,8 +4,7 @@ import Notification from "../models/Notification.js";
 import User from '../models/User.js';
 import Claim from "../models/Claim.js";
 import { getIO } from "../utils/socket.js";
-
-
+// import asyncHandler from "express-async-handler";
 
 
 
@@ -104,20 +103,19 @@ const claimItem = asyncHandler(async (req, res) => {
     const notification = await Notification.create({
         userId: item.postedBy,
         type: "claim_request",
-        message: `${req.user.name} wants to claim your item "${item.title}"`
+        refrenceId: claim._id,
+        message: `${req.user.name} wants to claim your item "${item.title}"`,
     });
     const poster = await User.findById(item.postedBy);
     // const io = req.app.get("io");
     if (poster) {
         poster.notifications.push(notification._id);
         await poster.save();
-
-
         io.to(poster._id.toString()).emit("newNotification", {
-            id:notification._id,
-            message: `${req.user.name} claimed your"${item.title}"`,
+            _id:notification._id,
+            message: `${req.user.name} claimed your "${item.title}"`,
             itemId: item._id,
-            claimId:claim._id,
+            refrenceId: claim._id,
             isRead: notification.isRead,
             createdAt: notification.createdAt
         });

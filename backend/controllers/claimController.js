@@ -88,7 +88,8 @@ const approveClaim=asyncHandler(async(req ,res)=>{
 
     const notification=await Notification.create({
         userId:claim.claimerId,
-        type: "claim_status",
+        type: "approve",
+        refrenceId: claim._id,
         message: `Your claim for item "${item.title}" has been approved!`
     });
 
@@ -102,6 +103,7 @@ const approveClaim=asyncHandler(async(req ,res)=>{
             message: notification.message,
             itemId: item._id,
             isRead: notification.isRead,
+            refrenceId: claim._id,
             createdAt: notification.createdAt
         });
     }
@@ -114,5 +116,28 @@ const approveClaim=asyncHandler(async(req ,res)=>{
 
 });
 
+const getClaimById=asyncHandler(async(req, res)=>{
+    const {claimId}=req.params;
+    const claim=await Claim.findById(claimId)
+        .populate("itemId", "title imageUrl category description postedBy")
+        .populate("claimerId", "name email avatarUrl");
+    if(!claim){
+        res.status(404)
+        throw new Error("Claim not found");
+    }
+    console.log(claim);
+    // Convert ObjectId to string before comparison
+    // const itemOwnerId = claim.itemId.postedBy.toString();
+    // const loggedInUserId = req.user._id.toString();
+    // if (itemOwnerId !== loggedInUserId) {
+    //     res.status(403);
+    //     throw new Error("Not authorized");
+    // }
+    res.json({
+        success:true,
+        claim
+    });
+});
 
-export {approveClaim, rejectClaim};
+
+export {approveClaim, rejectClaim, getClaimById};

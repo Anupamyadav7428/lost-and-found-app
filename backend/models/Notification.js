@@ -9,9 +9,14 @@ const notificationSchema =new mongoose.Schema({
     },
     type: { 
         type: String, 
+        enum: ["claim_request", "approve", "rejected"],
         required: true 
-    }, //"item_match", "claim_update"
+    },
     message: { type: String, required: true },
+    refrenceId:{
+        type: mongoose.Schema.Types.ObjectId,
+        ref:"Claim"
+    },
     isRead: { type: Boolean, default: false },
     
 

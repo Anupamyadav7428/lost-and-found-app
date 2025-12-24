@@ -1,22 +1,20 @@
 import User from "../models/User.js";
 import Notification from "../models/Notification.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
-
-const getNotifications=asyncHandler(async(req , res)=>{
-    const user=await User.findById(req.user._id)
-    .populate({
-        path: "notifications",
-        select: "message isRead createdAt"
-    });
+const getNotifications = asyncHandler(async (req, res) => {
+    const user = await User.findById(req.user._id)
+        .populate({
+            path: "notifications",
+            select: "message isRead createdAt refrenceId"
+        });
     console.log(user.notifications);
     res.status(200).json({
-    success: true,
-    notifications: user.notifications
-  });
+        success: true,
+        notifications: user.notifications
+    });
 });
 
 const markNotificationRead = asyncHandler(async (req, res) => {
-    
     const notification = await Notification.findById(req.params.id);
 
     if (!notification) {
@@ -31,6 +29,7 @@ const markNotificationRead = asyncHandler(async (req, res) => {
     }
 
     notification.isRead = true;
+    // notification.status="approved"
     await notification.save();
 
     res.json({
@@ -38,7 +37,6 @@ const markNotificationRead = asyncHandler(async (req, res) => {
         message: "Notification marked as read"
     });
 });
-
-export  {getNotifications, markNotificationRead};
+export { getNotifications, markNotificationRead };
 
 

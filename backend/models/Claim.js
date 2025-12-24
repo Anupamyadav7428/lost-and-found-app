@@ -7,10 +7,10 @@ const claimSchema =new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId, ref: "User", required: true 
     },
     status: { 
-        type: String, enum: ["pending", "approved", "rejected"], default: "pending" 
+        type: String, enum: ["pending", "approved", "rejected"], default: "pending"
     },
     proofNotes: {
-        type: String, default: "" 
+        type: String, default: ""
     },
 
 }, 

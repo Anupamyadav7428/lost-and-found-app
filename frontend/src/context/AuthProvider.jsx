@@ -1,13 +1,14 @@
 import { useEffect, useState } from "react";
 import AuthContext from "./auth.context";
 import api from "../api/axios";
+import toast from "react-hot-toast";
 
 const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [token, setToken] = useState(null);
   const [loading, setLoading] = useState(true);
   const [isLoggedIn, setIsLoggedIn] = useState(false); // ✅ NEW STATE
-    // Load token from localStorage on refresh
+  // Load token from localStorage on refresh
   useEffect(() => {
     const storedToken = localStorage.getItem("token");
     if (storedToken) {
@@ -15,7 +16,7 @@ const AuthProvider = ({ children }) => {
       // setIsLoggedIn(true);
     } else {
       setLoading(false);
-      
+
     }
   }, []);
   useEffect(() => {
@@ -31,6 +32,9 @@ const AuthProvider = ({ children }) => {
         setUser(res.data.user);
         setIsLoggedIn(true);
       } catch {
+        toast.error(
+          err?.response?.data?.message || "Session expired. Please login again."
+        );
         logout();
       } finally {
         setLoading(false);
@@ -44,10 +48,14 @@ const AuthProvider = ({ children }) => {
 
   const login = (data) => {
     localStorage.setItem("token", data.token);
-   
+
     setToken(data.token);
     setUser(data.user);
     setIsLoggedIn(true);
+    toast.success("Logged in successfully");
+    setTimeout(() => {
+      toast.success(`Welcome ${data.user.name}`);
+    }, 1000);
   };
 
   const logout = () => {
@@ -55,10 +63,11 @@ const AuthProvider = ({ children }) => {
     setToken(null);
     setUser(null);
     setIsLoggedIn(false);
+    toast("Logged out", { icon: "👋" });
   };
-  
+
   return (
-    <AuthContext.Provider value={{ user, token, loading, login, logout,isLoggedIn }}>
+    <AuthContext.Provider value={{ user, token, loading, login, logout, isLoggedIn }}>
       {children}
     </AuthContext.Provider>
   );

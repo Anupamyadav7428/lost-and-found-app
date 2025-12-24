@@ -1,12 +1,14 @@
-const errorHandler=(err, req, res, next)=>{
-    console.log("Error: ", err);
+const errorHandler = (err, req, res, next) => {
+    console.error("Error:", err.message);
 
-    return res.status(500).json({
+    const statusCode =
+        res.statusCode && res.statusCode !== 200
+            ? res.statusCode
+            : 500;
+    res.status(statusCode).json({
         success: false,
-        message: err.message || "Server Error"
+        message: err.message || "Server Error",
     });
-
 };
-
 
 export default errorHandler;

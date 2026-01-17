@@ -26,15 +26,16 @@ const ItemCard = ({ item }) => {
     }
 
     return (
-        <div className="bg-white rounded-xl shadow hover:shadow-lg transition p-4 block">
+        <div className="bg-white border-2 rounded-xl shadow hover:shadow-lg transition p-4 block">
             <img
                 src={item.imageUrl}
                 alt={item.title}
-                className="h-48 w-full object-cover rounded-lg"
+                className="h-48 w-full object-contain rounded-lg "
             />
             <div className="mt-3">
                 <h3 className="font-semibold text-lg">{item.title}</h3>
                 <p className="text-sm text-gray-500">{item.category}</p>
+                <p className="text-sm, text-gray-500">{item.description}</p>
 
                 <span
                     className={`inline-block mt-2 px-3 py-1 text-xs rounded-full 
@@ -45,7 +46,7 @@ const ItemCard = ({ item }) => {
                                 : "bg-gray-200 text-gray-600"
                         }`}
                 >
-                    {item.status.toUpperCase()}
+                {item.status.toUpperCase()}
                 </span>
                 {item.status === "claimed" ? <button disabled className="mt-4 w-full bg-gray-600 text-white py-2 rounded-lg hover:bg-gray-700">
                     claimed

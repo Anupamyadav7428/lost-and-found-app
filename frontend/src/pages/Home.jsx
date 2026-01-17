@@ -37,7 +37,7 @@ const Home = () => {
           type="text"
           placeholder="Search item..."
           onChange={handleSearch}
-          className="border p-2 mb-4 w-3/4"
+          className="border rounded-full border-blue-600 p-2 mb-4 w-3/4"
         />
         {/* {console.log(isLogedIn)} */}
         {user &&(<div className="flex items-center gap-2">
